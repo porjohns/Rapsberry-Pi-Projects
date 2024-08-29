@@ -1,1 +1,57 @@
- Commit test
+				---SETUP---
+SSH into rapsberry pi:
+
+	ssh port@portspi
+
+Had to make sure that the raspberry pi was updated:
+
+	sudo apt update
+	sudo apt upgrade
+
+I then needed to run the script from get.docker.com for install and setup of docker on the pi:
+
+	curl -sSL https://get.docker.com | sh
+
+Got hit with an error while running that command that looked like: 
+
+	E: dpkg was interrupted, you must manually run 'sudo dpkg --configu	re -a' to correct the problem.
+
+However after runnign the command stated in the error, it fixed up my depackage configuration and I was off and running with Docker on my Raspberry Pi. Had to have been one of the most straight forward installs I have had on my Pi.
+
+
+			--- Container #1 : MySQL ---
+
+I wanted to start off with a MySQl image because I have a lot of experience with SQL and MySQL and felt like being able to understand the appliation will eliminate some confusing I would have had if I wouldve started with an appliation new to me.
+
+Started by going to https://hub.docker.com and finding the page for the MySQL image. The install command was simply:
+
+	docker pull mysql
+
+But nothing is ever that simple because I got hit with an error code:
+	
+	Using default tag: latest
+	permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Post "http://%2Fvar%2Frun%2Fdocker.sock/v1.47/images/create?fromImage=mysql&tag=latest": dial unix /var/run/docker.sock: connect: permission denied
+
+Turns out I still needed to login to docker through the command line before I can execute any pulls. I could do this using this command:
+
+	docker login -u "porjohns"
+
+That didnt really do anything for the error I was getting on the mysql pull request for the docker image but it did allow me greater number of pull requests from docker. But eventually I figured out that the solution to the pull request error was that i needed root permission, so adding sudo resulted in a successful pull.
+
+	sudo docker pull mysql
+
+So lets try to run the docker image and see what happens:
+
+	sudo docker run mysql
+
+Got an error back stating:
+	
+	You need to specify one of the following as an environment variable:
+    - MYSQL_ROOT_PASSWORD
+    - MYSQL_ALLOW_EMPTY_PASSWORD
+    - MYSQL_RANDOM_ROOT_PASSWORD
+
+So I will set the root password:
+ 
+	sudo docker run mysql -e MYSQL_ROOT_PASSWORD=******
+	
